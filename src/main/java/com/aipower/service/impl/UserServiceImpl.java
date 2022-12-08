@@ -4,17 +4,20 @@ import com.aipower.dao.UserDao;
 import com.aipower.domain.User;
 import com.aipower.service.UserService;
 import com.aipower.utils.MyBatisPlusUtil;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserDao, User> implements UserService {
     @Autowired
     private UserDao userDao;
 
     @Override
     public User getUserByUserId(String userId) {
-        return userDao.selectOne(MyBatisPlusUtil.selectUserByWhere("user_id", userId));
+        return getOne(Wrappers.<User>lambdaQuery().eq(User::getUserId,userId));
     }
 
     @Override
@@ -24,6 +27,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean insertUser(User user) {
-        return userDao.insert(user) > 0;
+        return save(user);
     }
 }
