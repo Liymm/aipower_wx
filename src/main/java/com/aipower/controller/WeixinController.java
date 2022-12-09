@@ -80,8 +80,6 @@ public class WeixinController {
     @PostMapping("/template/pay")
     public Result sendWxPayMsg(@RequestHeader("userId") String userId) {
         User user = userService.getUserByUserId(userId);
-        if (null == user)
-            return new Result(50001, "账号未登录");
         Map<String, Object> sendMsg = new HashMap<>();
 
         String toUserToken = user.getWeixinToken();
