@@ -5,4 +5,5 @@ import com.aipower.domain.Order;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 public interface OrderService extends IService<Order> {
+    Order selectOrderById(String userId, Long orderId);
 }

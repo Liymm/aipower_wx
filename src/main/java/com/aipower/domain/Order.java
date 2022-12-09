@@ -1,5 +1,6 @@
 package com.aipower.domain;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -12,6 +13,8 @@ public class Order {
     private Double originalPrice;// 原价格
     private Double transactionPrice; // 成交价格
     private Double couponPrice; // 券抵扣金额
+    @TableField(exist = false)
     private Coupon coupon; // 卷信息
+    @TableField(exist = false)
     private Address address; //  收货地址信息
 }
