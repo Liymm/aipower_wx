@@ -1,5 +1,7 @@
 package com.aipower.domain;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -8,6 +10,7 @@ import java.util.Date;
 @Data
 @TableName("tb_coupon")
 public class Coupon {
+    @TableId(type = IdType.AUTO)
     private Long id;
     private String userId;
     private Double money; // 券金额

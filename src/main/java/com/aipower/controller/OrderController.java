@@ -12,7 +12,8 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/{id}")
-    public Order getOrder(@RequestHeader(value = "userId") String userId, @PathVariable Long id) {
-        return orderService.selectOrderById(userId, id);
+    public Result getOrder(@RequestHeader(value = "userId") String userId, @PathVariable Long id) {
+        Order order = orderService.selectOrderById(userId, id);
+        return new Result(order);
     }
 }
