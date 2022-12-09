@@ -1,6 +1,7 @@
 package com.aipower.helper;
 
 import com.aipower.domain.Token;
+import com.aipower.domain.WxSendData;
 import com.aipower.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -33,17 +34,21 @@ public class WeiXinHelper {
     //网页授权后获取oppenid
     public final String page_oppenid = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
     private static final Logger log = LoggerFactory.getLogger(WeiXinHelper.class);
-    static String appid="wx7d97660308fba004";
-    static String secret="7110ee10356b3e20f7f94f6546ac175d";
+    static String appid = "wx7d97660308fba004";
+    static String secret = "7110ee10356b3e20f7f94f6546ac175d";
+
     public static String getAppid() {
         return appid;
     }
+
     public static void setAppid(String appid) {
         WeiXinHelper.appid = appid;
     }
+
     public static String getSecret() {
         return secret;
     }
+
     public static void setSecret(String secret) {
         WeiXinHelper.secret = secret;
     }
@@ -53,23 +58,24 @@ public class WeiXinHelper {
 
     /**
      * 发送消息
+     *
      * @param data
      * @return
      */
     public boolean send(Map<String, Object> data) {
         String token = getTokenBySession();
-        if(null != token && !"".equals(token)){
+        if (null != token && !"".equals(token)) {
             String requestUrl = news_url.replace("ACCESS_TOKEN", token);
             String toJSONString = JSONObject.toJSONString(data);
-            log.info("***************发消息的参数******************{}",toJSONString);
+            log.info("***************发消息的参数******************{}", toJSONString);
             String doPostSSLResult = HttpClientUtil.doPostSSL(requestUrl, toJSONString);
-            log.info("***************发送消息******************{}",doPostSSLResult);
+            log.info("***************发送消息******************{}", doPostSSLResult);
             JSONObject jsonObject = JSONObject.parseObject(doPostSSLResult);
             if (null != jsonObject) {
                 return true;
             }
             return false;
-        }else {
+        } else {
             log.error("WxHelper.send() 中 token 为空");
             return false;
         }
@@ -77,25 +83,26 @@ public class WeiXinHelper {
 
     /**
      * 关注微信后推送信息
+     *
      * @param fromusername 用户openid
-     * @param tousername 微信号id
+     * @param tousername   微信号id
      * @return
      */
-    public String subscribe(String fromusername,String tousername) {
-        return this.text(fromusername,tousername,"您的关注，是对我司产品的最大信任")
+    public String subscribe(String fromusername, String tousername) {
+        return this.text(fromusername, tousername, "您的关注，是对我司产品的最大信任")
                 .toString();
     }
 
-    private StringBuffer text(String fromusername,String tousername, String content) {
+    private StringBuffer text(String fromusername, String tousername, String content) {
         //单位为秒，不是毫秒
         Long createTime = new Date().getTime() / 1000;
         StringBuffer text = new StringBuffer();
         text.append("<xml>");
-        text.append("<ToUserName><![CDATA["+fromusername+"]]></ToUserName>");
-        text.append("<FromUserName><![CDATA["+tousername+"]]></FromUserName>");
-        text.append("<CreateTime><![CDATA["+createTime+"]]></CreateTime>");
+        text.append("<ToUserName><![CDATA[" + fromusername + "]]></ToUserName>");
+        text.append("<FromUserName><![CDATA[" + tousername + "]]></FromUserName>");
+        text.append("<CreateTime><![CDATA[" + createTime + "]]></CreateTime>");
         text.append("<MsgType><![CDATA[text]]></MsgType>");
-        text.append("<Content><![CDATA["+content+"]]></Content>");
+        text.append("<Content><![CDATA[" + content + "]]></Content>");
         text.append("</xml>");
         return text;
     }
@@ -132,6 +139,7 @@ public class WeiXinHelper {
 
     /**
      * 获取下载二维码地址
+     *
      * @param ticket
      * @return
      */
@@ -168,44 +176,46 @@ public class WeiXinHelper {
 
     /**
      * 获取 微信 接口的  token（session   session中没有再去微信服务器请求）
+     *
      * @return
      */
     public String getTokenBySession() {
         String token = "";
         //去redis中获取token
         token = redisTemplate.opsForValue().get("wx_token");
-        System.out.println("token===>"+token);
+        System.out.println("token===>" + token);
         if (token != null && !"".equals(token)) {
             return token;
         } else {
             Token tokenDto = getTokenByAppidAndAppsecret();
-            System.out.println("tokenDto==="+tokenDto);
+            System.out.println("tokenDto===" + tokenDto);
             redisTemplate.opsForValue().set("wx_token", tokenDto.getAccessToken(), 5, TimeUnit.MINUTES);
-            return  tokenDto.getAccessToken();
+            return tokenDto.getAccessToken();
         }
     }
 
     /**
      * 直接获取token  ---->>   微信服务器
      * token 失效时间 7100
+     *
      * @return
      */
     private Token getTokenByAppidAndAppsecret() {
         Token token = null;
-        System.out.println("appid===>"+appid);
+        System.out.println("appid===>" + appid);
         String requestUrl = token_url.replace("APPID", appid).replace("APPSECRET", secret);
         // 发起GET请求获取凭证
         String result = HttpClientUtil.doGet(requestUrl);
         JSONObject jsonObject = JSONObject.parseObject(result);
-        log.info("获取Token返回结果----->;WxHelper-getTokenByAppidAndAppsecret:"+jsonObject);
+        log.info("获取Token返回结果----->;WxHelper-getTokenByAppidAndAppsecret:" + jsonObject);
         if (null != jsonObject) {
             token = new Token();
             String access_token = jsonObject.getString("access_token");
-            System.out.println("access_token===>"+access_token);
-            if(null != access_token && !"".equals(access_token)){
+            System.out.println("access_token===>" + access_token);
+            if (null != access_token && !"".equals(access_token)) {
                 token.setAccessToken(access_token);
                 token.setExpiresIn(jsonObject.getIntValue("expires_in"));
-            }else {
+            } else {
                 token = null;
                 // 获取token失败
                 log.error("获取token失败 errcode:{} errmsg:{}", jsonObject.getIntValue("errcode"), jsonObject.getString("errmsg"));
@@ -216,6 +226,7 @@ public class WeiXinHelper {
 
     /**
      * 下载二维码
+     *
      * @param requestUrl
      * @param ticket
      * @return
@@ -235,9 +246,9 @@ public class WeiXinHelper {
             int len;
             long l = System.currentTimeMillis();
             // 输出的文件流
-            String filename ="qrcode"+ "/qr/"+l+".jpg";  //下载路径及下载图片名称
+            String filename = "qrcode" + "/qr/" + l + ".jpg";  //下载路径及下载图片名称
 
-            File files = new File("qrcode"+ "/qr");
+            File files = new File("qrcode" + "/qr");
             if (!files.exists()) {
                 files.mkdirs();// 创建文件根目录
             }
@@ -250,9 +261,19 @@ public class WeiXinHelper {
             // 完毕，关闭所有链接
             os.close();
             is.close();
-            return "/home/www/VX/qr/"+l+".jpg";
+            return "/home/www/VX/qr/" + l + ".jpg";
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public static Map<String, Object> makeWxPostMsg(String first, String remark, String[] keyword) {
+        Map<String, Object> data = new HashMap<>();
+        data.put("first", new WxSendData(first));
+        for (int i = 1; i <= keyword.length; i++) {
+            data.put("keyword" + i, new WxSendData(keyword[i - 1]));
+        }
+        data.put("remark", new WxSendData(remark));
+        return data;
     }
 }
