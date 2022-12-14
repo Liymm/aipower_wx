@@ -1,7 +1,6 @@
 package com.aipower.interceptor;
 
 import com.aipower.controller.Code;
-import com.aipower.controller.Result;
 import com.aipower.domain.User;
 import com.aipower.exception.LoginStateException;
 import com.aipower.service.UserService;
@@ -20,7 +19,6 @@ public class UserInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         String userId = request.getHeader("userId");
-        System.out.println("这里在拦截" + userId);
 
         if (null != userId) {
             User user = userService.getUserByUserId(userId);

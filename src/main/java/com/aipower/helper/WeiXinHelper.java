@@ -4,10 +4,10 @@ import com.aipower.domain.Token;
 import com.aipower.domain.WxSendData;
 import com.aipower.utils.HttpClientUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.google.gson.Gson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -34,24 +34,10 @@ public class WeiXinHelper {
     //网页授权后获取oppenid
     public final String page_oppenid = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
     private static final Logger log = LoggerFactory.getLogger(WeiXinHelper.class);
-    static String appid = "wx7d97660308fba004";
-    static String secret = "7110ee10356b3e20f7f94f6546ac175d";
-
-    public static String getAppid() {
-        return appid;
-    }
-
-    public static void setAppid(String appid) {
-        WeiXinHelper.appid = appid;
-    }
-
-    public static String getSecret() {
-        return secret;
-    }
-
-    public static void setSecret(String secret) {
-        WeiXinHelper.secret = secret;
-    }
+    @Value("${wx.appid}")
+    private String appid;
+    @Value("${wx.secret}")
+    private String secret;
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;

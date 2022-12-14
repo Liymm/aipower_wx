@@ -12,11 +12,11 @@ import java.util.Date;
 @TableName("tb_user")
 public class User {
     @TableId(type = IdType.AUTO)
-    private int id;
+    private Long id;
     private String userId;
     private String name;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date birthday;
-    private int gender;
+    private Integer gender;
     private String weixinToken;
 }
