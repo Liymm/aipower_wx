@@ -26,4 +26,10 @@ public class OrderController {
                 .eq(Order::getUserId, userId));
         return new Result(orderList);
     }
+
+    @PostMapping
+    public Result saveOrder(@RequestBody Order order) {
+        boolean success = orderService.save(order);
+        return new Result(success ? Code.SUCCESS : Code.SYSTEM_ERR, "");
+    }
 }

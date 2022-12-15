@@ -27,6 +27,7 @@ public class AddressController {
     ) {
         address.setUserId(userId);
         boolean success = addressService.save(address);
+        addressService.updateDefaultAddress(userId, -1L);
         return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
     }
 
@@ -38,6 +39,7 @@ public class AddressController {
         boolean success = addressService.remove(Wrappers.<Address>lambdaQuery()
                 .eq(Address::getId, id)
                 .eq(Address::getUserId, userId));
+        addressService.updateDefaultAddress(userId, -1L);
         return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
     }
 
@@ -50,6 +52,7 @@ public class AddressController {
         boolean success = addressService.update(address, Wrappers.lambdaUpdate(Address.class)
                 .eq(Address::getUserId, userId)
                 .eq(Address::getId, id));
+        addressService.updateDefaultAddress(userId, id);
         return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
     }
 }
