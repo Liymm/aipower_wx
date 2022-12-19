@@ -13,15 +13,10 @@ public class Result {
 
     }
 
-    public Result(Object data) {
-        this.code = 200;
-        this.success = 1;
+    public Result(Code code, Object data) {
+        this.code = code.getCode();
+        this.success = code.getCode() == 200 ? 1 : 0;
+        this.msg = code.getMsg();
         this.data = data;
-    }
-
-    public Result(int code, String msg) {
-        this.success = code == 200 ? 1 : 0;
-        this.code = code;
-        this.msg = msg;
     }
 }

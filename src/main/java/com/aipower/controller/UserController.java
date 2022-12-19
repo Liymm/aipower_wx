@@ -15,9 +15,28 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{userId}")
+    /**
+     * 根据userId获取用户信息
+     *
+     * @param userId 用户id
+     * @return 结果
+     */
+    @GetMapping("/userid-{userId}")
     public Result getUserByUserId(@PathVariable String userId) {
         User user = userService.getUserByUserId(userId);
-        return new Result(user);
+        return new Result(Code.SUCCESS, user);
+    }
+
+
+    /**
+     * 根据userId获取用户信息
+     *
+     * @param openId 微信id
+     * @return 结果
+     */
+    @GetMapping("/openid-{openId}")
+    public Result getUserByOpenId(@PathVariable String openId) {
+        User user = userService.getUserByWXToken(openId);
+        return new Result(Code.SUCCESS, user);
     }
 }

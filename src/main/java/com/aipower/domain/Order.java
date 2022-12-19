@@ -12,12 +12,13 @@ public class Order {
     @TableId(type = IdType.AUTO)
     private Long id;
     private String userId;
+    private Long couponId; // 优惠券id
+    private String address; // 收货地址
     private String productName; // 商品名称
     private Double originalPrice;// 原价格
     private Double transactionPrice; // 成交价格
     private Double couponPrice; // 券抵扣金额
     @TableField(exist = false)
     private Coupon coupon; // 卷信息
-    @TableField(exist = false)
-    private Address address; //  收货地址信息
+    private Integer payFinish;
 }

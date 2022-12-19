@@ -14,12 +14,25 @@ public class CouponController {
     @Autowired
     private CouponService couponService;
 
+    /**
+     * 获取用户所有优惠券
+     *
+     * @param userId 用户id
+     * @return 所有匹配的优惠券信息
+     */
     @GetMapping
     public Result getAll(@RequestHeader(value = "userId") String userId) {
         List<Coupon> couponList = couponService.list(Wrappers.<Coupon>lambdaQuery().eq(Coupon::getUserId, userId));
-        return new Result(couponList);
+        return new Result(Code.SUCCESS, couponList);
     }
 
+    /**
+     * 添加优惠券
+     *
+     * @param userId 用户id
+     * @param coupon 优惠券信息
+     * @return 结果
+     */
     @PostMapping
     public Result saveCoupon(
             @RequestHeader(value = "userId") String userId,
@@ -27,9 +40,16 @@ public class CouponController {
     ) {
         coupon.setUserId(userId);
         boolean success = couponService.save(coupon);
-        return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
+        return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
 
+    /**
+     * 删除某条优惠券
+     *
+     * @param userId 用户id
+     * @param id     优惠券id
+     * @return 结果
+     */
     @DeleteMapping("/{id}")
     public Result deleteCouponById(
             @RequestHeader(value = "userId") String userId,
@@ -38,9 +58,17 @@ public class CouponController {
         boolean success = couponService.remove(Wrappers.<Coupon>lambdaQuery()
                 .eq(Coupon::getId, id)
                 .eq(Coupon::getUserId, userId));
-        return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
+        return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
 
+    /**
+     * 更新某个优惠券
+     *
+     * @param userId 用户id
+     * @param id     优惠券id
+     * @param coupon 修改信息
+     * @return 结果
+     */
     @PutMapping("/{id}")
     public Result updateCouponById(
             @RequestHeader(value = "userId") String userId,
@@ -50,6 +78,6 @@ public class CouponController {
         boolean success = couponService.update(coupon, Wrappers.lambdaUpdate(Coupon.class)
                 .eq(Coupon::getUserId, userId)
                 .eq(Coupon::getId, id));
-        return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
+        return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
 }

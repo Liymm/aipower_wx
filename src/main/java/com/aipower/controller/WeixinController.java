@@ -98,7 +98,7 @@ public class WeixinController {
         sendMsg.put("data", map);
         sendMsg.put("url","https://shop.myaipower.com");
         weiXinHelper.send(sendMsg);
-        return new Result(sendMsg);
+        return new Result(Code.SUCCESS, sendMsg);
     }
 
 }

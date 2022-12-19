@@ -2,7 +2,7 @@ package com.aipower.interceptor;
 
 import com.aipower.controller.Code;
 import com.aipower.domain.User;
-import com.aipower.exception.LoginStateException;
+import com.aipower.exception.MyRuntimeException;
 import com.aipower.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,7 @@ public class UserInterceptor implements HandlerInterceptor {
         if (null != userId) {
             User user = userService.getUserByUserId(userId);
             if (null == user) {
-                throw new LoginStateException(Code.ACCOUNT_NOT_REGISTER, "账号未注册");
+                throw new MyRuntimeException(Code.ERR_ACCOUNT_NOT_REGISTER);
             }
         }
         return true;
