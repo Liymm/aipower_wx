@@ -17,7 +17,7 @@ public class CouponServiceImpl extends ServiceImpl<CouponDao, Coupon> implements
                 .eq(Coupon::getUserId, userId)
                 .eq(Coupon::getId, id));
 
-        if (null != coupon)
+        if (null == coupon)
             throw new MyRuntimeException(Code.ERR_CAN_NOT_FIND_COUPON);
 
         return update(Wrappers.lambdaUpdate(Coupon.class)

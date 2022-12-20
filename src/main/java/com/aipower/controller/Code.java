@@ -9,7 +9,7 @@ public enum Code {
     ERR_SYSTEM(99999, "系统异常"),
     ERR_NOT_YOUR_COUPON(52001, "添加的优惠卷不是你的优惠券"),
     ERR_ONLY_UPDATE_ADDRESS(52002, "订单已付款，只支持修改地址信息"),
-    ERR_USE_COUPON(52003, ""),
+    ERR_USE_COUPON(52003, "优惠卷使用异常"),
     ERR_PAY_REPEAT(52004, "重复支付订单"),
     ERR_CAN_NOT_FIND_COUPON(53001, "找不到账号对应的优惠券"),
     ;

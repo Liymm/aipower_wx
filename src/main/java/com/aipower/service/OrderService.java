@@ -6,5 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Transactional
 public interface OrderService extends IService<Order> {
-    Order selectOrderById(String userId, Long orderId);
+    Order getOrderDetailsById(String userId, Long orderId);
+
+    Order getOne(String userId, Long id);
+
+    boolean update(Order order, String userId, Long id);
+
+    boolean paySuccess(String userId, Long id, Double couponMoney);
 }

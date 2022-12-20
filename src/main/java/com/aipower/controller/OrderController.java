@@ -29,8 +29,8 @@ public class OrderController {
      * @return 订单详情
      */
     @GetMapping("/{id}")
-    public Result getOrderById(@RequestHeader(value = "userId") String userId, @PathVariable Long id) {
-        Order order = orderService.selectOrderById(userId, id);
+    public Result getOrderDetailsById(@RequestHeader(value = "userId") String userId, @PathVariable Long id) {
+        Order order = orderService.getOrderDetailsById(userId, id);
         return new Result(Code.SUCCESS, order);
     }
 
@@ -79,34 +79,26 @@ public class OrderController {
     public Result updateOrder(@RequestHeader("userId") String userId,
                               @PathVariable Long id,
                               @RequestBody Order order) {
-        Order thisOrder = orderService.getOne(Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getUserId, userId)
-                .eq(Order::getId, id));
+        System.out.println(order);
 
+        Order thisOrder = orderService.getOne(userId, id);
+
+        boolean changePayState = (0 == thisOrder.getPayFinish() && 1 == order.getPayFinish());
+
+        // 已支付的订单不能修改除地址外的其他信息
         if (thisOrder.getPayFinish() == 1) {
             if (null != order.getCouponId()
                     || null != order.getProductName()
                     || null != order.getOriginalPrice()
                     || null != order.getTransactionPrice()
-                    || null != order.getCouponPrice()
-                    || null != order.getPayFinish())
+                    || null != order.getCouponPrice())
                 throw new MyRuntimeException(Code.ERR_ONLY_UPDATE_ADDRESS);
-
-            if (null != order.getAddress()) {
-                Order newOrder = new Order();
-                order.setAddress(order.getAddress());
-                order = newOrder;
-            } else {
-                throw new MyRuntimeException(Code.ERR_ONLY_UPDATE_ADDRESS);
-            }
         }
 
-        boolean success = orderService.update(order, Wrappers.lambdaUpdate(Order.class)
-                .eq(Order::getUserId, userId)
-                .eq(Order::getId, id));
+        boolean success = orderService.update(order, userId, id);
 
-        if (thisOrder.getPayFinish() == 0 && order.getPayFinish() == 1)
-            couponService.useCoupon(userId, order.getCouponId(), order.getCouponPrice());
+        if (changePayState)
+            orderService.paySuccess(userId, id, thisOrder.getCouponPrice());
 
         return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
@@ -114,16 +106,15 @@ public class OrderController {
     @PostMapping("/pay_success/{id}")
     public Result paySuccess(@RequestHeader("userId") String userId,
                              @PathVariable Long id) {
-        Order order = orderService.getOne(Wrappers.lambdaQuery(Order.class)
-                .eq(Order::getUserId, userId)
-                .eq(Order::getId, id));
+        Order order = orderService.getOne(userId, id);
+
         if (null == order)
             throw new MyRuntimeException(Code.ERR_CAN_NOT_FIND_COUPON);
 
         if (order.getPayFinish() == 1)
             throw new MyRuntimeException(Code.ERR_PAY_REPEAT);
 
-        boolean updateCoupon = couponService.useCoupon(userId, order.getCouponId(), order.getCouponPrice());
+        boolean updateCoupon = orderService.paySuccess(userId, id, order.getCouponPrice());
 
         return new Result(updateCoupon ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
