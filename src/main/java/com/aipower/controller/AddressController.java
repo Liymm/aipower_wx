@@ -40,21 +40,9 @@ public class AddressController {
     ) {
         address.setUserId(userId);
         boolean success = addressService.save(address);
-        addressService.updateDefaultAddress(userId, address.getDefaultAddress() ? address.getId() : -1L);
+        addressService.updateDefaultAddress(userId, address.getDefaultAddress() == 1 ? address.getId() : -1L);
         return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
-
-//    @DeleteMapping("/{id}")
-//    public Result deleteAddressById(
-//            @RequestHeader(value = "userId") String userId,
-//            @PathVariable Long id
-//    ) {
-//        boolean success = addressService.remove(Wrappers.<Address>lambdaQuery()
-//                .eq(Address::getId, id)
-//                .eq(Address::getUserId, userId));
-//        addressService.updateDefaultAddress(userId, -1L);
-//        return new Result(success ? 200 : Code.SYSTEM_ERR, success ? "" : "出错了");
-//    }
 
     /**
      * 删除地址，根据唯一id
@@ -92,7 +80,7 @@ public class AddressController {
         boolean success = addressService.update(address, Wrappers.lambdaUpdate(Address.class)
                 .eq(Address::getUserId, userId)
                 .eq(Address::getId, id));
-        if (address.getDefaultAddress())
+        if (address.getDefaultAddress() == 1)
             addressService.updateDefaultAddress(userId, id);
         return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }

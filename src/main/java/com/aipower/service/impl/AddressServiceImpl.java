@@ -21,7 +21,7 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
     public Boolean updateDefaultAddress(String userId, Long id) {
         List<Address> addressList = list(Wrappers.lambdaQuery(Address.class)
                 .eq(Address::getUserId, userId)
-                .eq(Address::getDefaultAddress, true));
+                .eq(Address::getDefaultAddress, 1));
 
         List<Long> ids = addressList.stream().map(Address::getId).collect(Collectors.toList());
         boolean clearAllSet = false;
@@ -33,19 +33,19 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
                 clearAllSet = update(Wrappers.<Address>lambdaUpdate()
                         .eq(Address::getUserId, userId)
                         .in(Address::getId, ids)
-                        .set(Address::getDefaultAddress, false));
+                        .set(Address::getDefaultAddress, 0));
             } else
                 clearAllSet = true;
             setTrue = update(Wrappers.<Address>lambdaUpdate()
                     .eq(Address::getUserId, userId)
                     .eq(Address::getId, id)
-                    .set(Address::getDefaultAddress, true));
+                    .set(Address::getDefaultAddress, 1));
         } else {
             if (ids.size() > 1) {
                 clearAllSet = update(Wrappers.<Address>lambdaUpdate()
                         .eq(Address::getUserId, userId)
                         .in(Address::getId, ids.remove(0))
-                        .set(Address::getDefaultAddress, false));
+                        .set(Address::getDefaultAddress, 0));
                 setTrue = true;
             }
         }

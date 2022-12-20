@@ -14,6 +14,6 @@ public class Address {
     private String address;
     private String phone;
     private String name;
-    private Boolean defaultAddress;
+    private Integer defaultAddress;
 
 }
