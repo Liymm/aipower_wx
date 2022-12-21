@@ -1,5 +1,6 @@
 package com.aipower.controller;
 
+import com.aipower.domain.Order;
 import com.aipower.domain.User;
 import com.aipower.domain.WxPushMessage;
 import com.aipower.helper.WeiXinHelper;
@@ -10,7 +11,6 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -78,7 +78,8 @@ public class WeixinController {
     }
 
     @PostMapping("/template/pay")
-    public Result sendWxPayMsg(@RequestHeader("userId") String userId) {
+    public Result sendWxPayMsg(@RequestHeader("userId") String userId,
+                               @RequestBody Order order) {
         User user = userService.getUserByUserId(userId);
         Map<String, Object> sendMsg = new HashMap<>();
 
@@ -87,13 +88,13 @@ public class WeixinController {
         sendMsg.put("template_id", "Rg7zG7YBcr4MeUhdipnf6BvYvedFuDd2yJ-KrWkORck");
 
         Map<String, Object> map = WeiXinHelper.makeWxPostMsg(
-                "请在15分钟内付款",
+                "您有一个未付款订单，请尽快支付",
                 "点击查看详情",
                 new String[]{
-                        "O2017102611202356",
-                        "11111111000元",
-                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()),
-                        "3"
+                        order.getProductName(),
+                        order.getCouponPrice() + "元",
+                        order.getCreateTime().toString(),
+                        order.getQuantity() + ""
                 });
         sendMsg.put("data", map);
         sendMsg.put("url","https://shop.myaipower.com");

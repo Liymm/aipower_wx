@@ -1,6 +1,5 @@
 package com.aipower.utils;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import org.springframework.util.DigestUtils;
 
 import java.io.UnsupportedEncodingException;
