@@ -118,4 +118,21 @@ public class OrderController {
 
         return new Result(updateCoupon ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
+
+    @DeleteMapping("/{id}")
+    public Result deleteOrder(@RequestHeader("userId") String userId,
+                              @PathVariable Long id) {
+        Order order = orderService.getOne(userId, id);
+        if (order.getPayFinish() == 1)
+            throw new MyRuntimeException(Code.ERR_DELETE_PAY_ORDER);
+
+        boolean delete = orderService.remove(Wrappers.lambdaQuery(Order.class)
+                .eq(Order::getUserId, userId)
+                .eq(Order::getId, id));
+
+        if (!delete)
+            throw new MyRuntimeException(Code.ERR_DELETE_ORDER);
+
+        return new Result(Code.SUCCESS, null);
+    }
 }
