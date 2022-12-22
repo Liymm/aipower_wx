@@ -55,16 +55,26 @@ public class OrderController {
      */
     @PostMapping
     public Result saveOrder(@RequestBody Order order) {
+        checkCouponMatch(order);
+        boolean success = orderService.save(order);
+        return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, "");
+    }
+
+    /**
+     * 检查userId和优惠券是否匹配上
+     *
+     * @param order
+     */
+    private void checkCouponMatch(Order order) {
         if (null != order.getCouponId()) {
-            Coupon coupon = couponService.getById(order.getCouponId());
+            Coupon coupon = couponService.getOne(Wrappers.lambdaQuery(Coupon.class)
+                    .eq(Coupon::getId, order.getCouponId()));
             if (null == coupon)
                 throw new MyRuntimeException(Code.ERR_CAN_NOT_FIND_COUPON);
 
             if (!Objects.equals(coupon.getUserId(), order.getUserId()))
                 throw new MyRuntimeException(Code.ERR_NOT_YOUR_COUPON);
         }
-        boolean success = orderService.save(order);
-        return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, "");
     }
 
     /**
@@ -73,7 +83,7 @@ public class OrderController {
      * @param userId 用户id
      * @param id     订单唯一编号
      * @param order  修改的内容
-     * @r eturn 结果
+     * @return 结果
      */
     @PutMapping("/{id}")
     public Result updateOrder(@RequestHeader("userId") String userId,
@@ -83,23 +93,31 @@ public class OrderController {
 
         Order thisOrder = orderService.getById(id);
 
-        if (null != thisOrder && null != thisOrder.getUserId() && null != thisOrder.getCouponId()) {
-            boolean changePayState = (0 == thisOrder.getPayFinish() && 1 == order.getPayFinish());
+        boolean isPayFinish = false;
 
-            // 已支付的订单不能修改除地址外的其他信息
-            if (thisOrder.getPayFinish() == 1) {
-                if (null != order.getCouponId()
-                        || null != order.getProductName()
-                        || null != order.getOriginalPrice()
-                        || null != order.getTransactionPrice()
-                        || null != order.getCouponPrice())
-                    throw new MyRuntimeException(Code.ERR_ONLY_UPDATE_ADDRESS);
-            }
+        if (null == thisOrder)
+            throw new MyRuntimeException(Code.ERR_ORDER_EMPTY);
 
-            if (changePayState)
-                orderService.paySuccess(userId, id, thisOrder.getCouponPrice());
+        checkCouponMatch(order);
+
+        if (0 == thisOrder.getPayFinish() && 1 == order.getPayFinish()) {
+            if (null == order.getUserId() || null == order.getCouponId() || null == order.getAddress())
+                throw new MyRuntimeException(Code.ERR_ORDER_CONTENT_EMPTY);
+
+            isPayFinish = true;
         }
-        boolean success = orderService.update(order, userId, id);
+
+        // 已支付的订单不能修改除地址外的其他信息
+        if (thisOrder.getPayFinish() == 1) {
+            if (null != order.getCouponId()
+                    || null != order.getProductName()
+                    || null != order.getOriginalPrice()
+                    || null != order.getTransactionPrice()
+                    || null != order.getCouponPrice())
+                throw new MyRuntimeException(Code.ERR_ONLY_UPDATE_ADDRESS);
+        }
+
+        boolean success = orderService.update(order, id, isPayFinish);
 
         return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }

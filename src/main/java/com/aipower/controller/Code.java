@@ -13,6 +13,8 @@ public enum Code {
     ERR_PAY_REPEAT(52004, "重复支付订单"),
     ERR_DELETE_PAY_ORDER(52005, "订单已付款，无法删除"),
     ERR_DELETE_ORDER(52006, "订单删除失败"),
+    ERR_ORDER_EMPTY(52007, "订单不存在，请检查后尝试"),
+    ERR_ORDER_CONTENT_EMPTY(52008, "订单内容不全，请填写完全后确认支付"),
     ERR_CAN_NOT_FIND_COUPON(53001, "找不到账号对应的优惠券"),
     ;
     private final int code;

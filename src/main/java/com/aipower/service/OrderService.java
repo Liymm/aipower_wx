@@ -10,7 +10,7 @@ public interface OrderService extends IService<Order> {
 
     Order getOne(String userId, Long id);
 
-    boolean update(Order order, String userId, Long id);
+    boolean update(Order order, Long id, boolean isPayFinish);
 
     boolean paySuccess(String userId, Long id, Double couponMoney);
 }

@@ -31,10 +31,13 @@ public class OrderServiceImpl extends ServiceImpl<OrderDao, Order> implements Or
     }
 
     @Override
-    public boolean update(Order order, String userId, Long id) {
+    public boolean update(Order order, Long id, boolean isPayFinish) {
         order.setPayFinish(null);
+
+        if (isPayFinish)
+            couponService.useCoupon(order.getUserId(), order.getCouponId(), order.getCouponPrice());
+
         return update(order, Wrappers.lambdaUpdate(Order.class)
-                .eq(Order::getUserId, userId)
                 .eq(Order::getId, id));
     }
 
