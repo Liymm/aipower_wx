@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -93,7 +94,7 @@ public class WeixinController {
                 new String[]{
                         order.getProductName(),
                         order.getCouponPrice() + "元",
-                        order.getCreateTime().toString(),
+                        new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(order.getCreateTime()),
                         order.getQuantity() + ""
                 });
         sendMsg.put("data", map);

@@ -73,7 +73,7 @@ public class OrderController {
      * @param userId 用户id
      * @param id     订单唯一编号
      * @param order  修改的内容
-     * @return 结果
+     * @r eturn 结果
      */
     @PutMapping("/{id}")
     public Result updateOrder(@RequestHeader("userId") String userId,
@@ -81,24 +81,25 @@ public class OrderController {
                               @RequestBody Order order) {
         System.out.println(order);
 
-        Order thisOrder = orderService.getOne(userId, id);
+        Order thisOrder = orderService.getById(id);
 
-        boolean changePayState = (0 == thisOrder.getPayFinish() && 1 == order.getPayFinish());
+        if (null != thisOrder && null != thisOrder.getUserId() && null != thisOrder.getCouponId()) {
+            boolean changePayState = (0 == thisOrder.getPayFinish() && 1 == order.getPayFinish());
 
-        // 已支付的订单不能修改除地址外的其他信息
-        if (thisOrder.getPayFinish() == 1) {
-            if (null != order.getCouponId()
-                    || null != order.getProductName()
-                    || null != order.getOriginalPrice()
-                    || null != order.getTransactionPrice()
-                    || null != order.getCouponPrice())
-                throw new MyRuntimeException(Code.ERR_ONLY_UPDATE_ADDRESS);
+            // 已支付的订单不能修改除地址外的其他信息
+            if (thisOrder.getPayFinish() == 1) {
+                if (null != order.getCouponId()
+                        || null != order.getProductName()
+                        || null != order.getOriginalPrice()
+                        || null != order.getTransactionPrice()
+                        || null != order.getCouponPrice())
+                    throw new MyRuntimeException(Code.ERR_ONLY_UPDATE_ADDRESS);
+            }
+
+            if (changePayState)
+                orderService.paySuccess(userId, id, thisOrder.getCouponPrice());
         }
-
         boolean success = orderService.update(order, userId, id);
-
-        if (changePayState)
-            orderService.paySuccess(userId, id, thisOrder.getCouponPrice());
 
         return new Result(success ? Code.SUCCESS : Code.ERR_SYSTEM, null);
     }
