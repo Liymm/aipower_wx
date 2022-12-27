@@ -1,6 +1,7 @@
-package com.aipower.controller;
+package com.aipower.exception;
 
-import com.aipower.exception.MyRuntimeException;
+import com.aipower.controller.Code;
+import com.aipower.controller.Result;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 

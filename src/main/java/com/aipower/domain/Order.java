@@ -4,7 +4,11 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
 
 @Data
 @TableName("tb_order")
@@ -22,5 +26,9 @@ public class Order {
     private Double couponPrice; // 券抵扣金额
     @TableField(exist = false)
     private Coupon coupon; // 卷信息
-    private Integer payFinish;
+    private Integer payFinish; // 是否支付成功
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private Date createTime; // 创建时间
+    private Integer quantity; // 商品数量
 }
