@@ -3,6 +3,7 @@ package com.aipower.service.impl;
 import com.aipower.dao.AddressDao;
 import com.aipower.domain.Address;
 import com.aipower.service.AddressService;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,14 @@ public class AddressServiceImpl extends ServiceImpl<AddressDao, Address> impleme
         }
 
         return clearAllSet && setTrue;
+    }
+
+    @Override
+    public Address selectOneByUserId(String userId) {
+        QueryWrapper wrapper=new QueryWrapper<Address>()
+                .eq("user_id",userId)
+                .eq("default_address",1);
+        Address address=baseMapper.selectOne(wrapper);
+        return address;
     }
 }

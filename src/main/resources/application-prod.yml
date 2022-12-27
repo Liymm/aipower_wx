@@ -26,7 +26,7 @@ spring:
         max-wait: -1
     password: Prodadmin123
   datasource:
-    url: jdbc:mysql://112.74.107.161:3306/aipower?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false
+    url: jdbc:mysql://112.74.107.161:3306/ry-vue?useUnicode=true&characterEncoding=utf8&autoReconnect=true&failOverReadOnly=false
     username: root
     password: Prodadmin123
     driver-class-name: com.mysql.cj.jdbc.Driver

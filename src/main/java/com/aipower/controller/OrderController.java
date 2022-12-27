@@ -47,6 +47,14 @@ public class OrderController {
         return new Result(Code.SUCCESS, orderList);
     }
 
+    @RequestMapping("/list/{uuid}")
+    public Result getAllOrderByUuid(@PathVariable String uuid) {
+        System.out.println("uuid=="+uuid);
+        List<Order> orderList = orderService.list(Wrappers.<Order>lambdaQuery()
+                .eq(Order::getUserId, uuid));
+        return new Result(Code.SUCCESS, orderList);
+    }
+
     /**
      * 添加订单，由客服人员生成订单，不填userid和地址，后续由用户添加
      *

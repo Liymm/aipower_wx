@@ -5,9 +5,12 @@ import com.aipower.domain.WxPushMessage;
 import com.aipower.helper.WeiXinHelper;
 import com.aipower.service.UserService;
 import com.aipower.utils.CommonUtil;
+import com.aipower.utils.HttpClientUtil;
 import com.aipower.utils.XmlUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.google.gson.Gson;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
@@ -23,6 +26,11 @@ public class WeixinController {
 
     @Autowired
     private WeiXinHelper weiXinHelper;
+
+    @Value("${wx.appid}")
+    private String appid;
+    @Value("${wx.secret}")
+    private String secret;
 
     @GetMapping("/wx")
     public String wxSignature(@RequestParam(value = "signature", required = false) String signature,
@@ -99,6 +107,21 @@ public class WeixinController {
         sendMsg.put("url","https://shop.myaipower.com");
         weiXinHelper.send(sendMsg);
         return new Result(Code.SUCCESS, sendMsg);
+    }
+
+    /**
+     * 网页授权获取openid
+     * @return
+     */
+    @RequestMapping("/get/openid")
+    public Result getopenIdByCode(String code){
+        System.out.println("code=="+code);
+        String resJson = HttpClientUtil.doGet(CommonUtil.getBaseAccessTokenUrl(appid, secret, code));
+        Gson gson = new Gson();
+        Map<String, String> map = new HashMap<>();
+        map=gson.fromJson(resJson,map.getClass());
+        User user = userService.getUserByWXToken(map.get("openid"));
+        return new Result(Code.SUCCESS,user.getUserId());
     }
 
 }

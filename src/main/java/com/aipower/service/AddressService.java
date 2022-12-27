@@ -7,4 +7,5 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public interface AddressService extends IService<Address> {
     Boolean updateDefaultAddress(String userId, Long id);
+    Address selectOneByUserId(String userId);
 }

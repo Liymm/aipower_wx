@@ -21,4 +21,21 @@ public class CommonUtil {
         }
         return userId;
     }
+    /**
+     * 请求微信接口获取回调数据
+     * @param appid
+     * @param secret
+     * @param code
+     * @return
+     */
+    public static String getBaseAccessTokenUrl(String appid,String secret,String code){
+        StringBuffer url=new StringBuffer()
+                .append("https://api.weixin.qq.com/sns/oauth2/access_token")
+                .append("?appid="+appid)
+                .append("&secret="+secret)
+                .append("&code="+code)
+                .append("&grant_type=authorization_code");
+        return url.toString();
+    }
+
 }

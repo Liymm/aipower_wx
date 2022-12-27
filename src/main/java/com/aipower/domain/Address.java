@@ -1,8 +1,6 @@
 package com.aipower.domain;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 @TableName("tb_address")
@@ -15,5 +13,5 @@ public class Address {
     private String phone;
     private String name;
     private Integer defaultAddress;
-
+    private Integer areaCode;
 }
