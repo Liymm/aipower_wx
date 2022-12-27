@@ -39,6 +39,11 @@ public class AddressController {
         return new Result(Code.SUCCESS, addressList);
     }
 
+    /**
+     * 获取单个地址
+     * @param uuid
+     * @return
+     */
     @RequestMapping("/one/{uuid}")
     public Result getOneByUuid(@PathVariable String uuid){
         System.out.println("uuid=="+uuid);
